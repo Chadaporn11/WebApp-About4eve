@@ -30,7 +30,7 @@ const makeHash = async (plainText) => {
 }
 
 // function insertUser
-const inserUser = (dataUser) => {
+const insertUser = (dataUser) => {
     return new Promise((resolve, reject) => {
         var new_user = new User({
             name: dataUser.name,
@@ -39,6 +39,7 @@ const inserUser = (dataUser) => {
         });
         new_user.save((err, data) => {
             if (err) {
+                console.log(err);
                 reject(new Error('Cannot insert user to DB!'))
             } else {
                 resolve({ message: 'Singn up successfully' })
@@ -93,10 +94,10 @@ router.route('/signup')
                     password: hashText,
                 }
                 console.log(playload);
-                inserUser(playload)
+                insertUser(playload)
                     .then(result => {
                         console.log(result);
-                        res.status(200).json(result)
+                        res.status(200).json(result);
                     })
                     .catch(err => {
                         console.log(err);
