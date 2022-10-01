@@ -9,7 +9,7 @@ const key = "My_Key";
 var Schema = require("mongoose").Schema;
 
 const userSchema = Schema({
-    name: String,
+    username: String,
     email: String,
     password: String,
 }, {
@@ -33,7 +33,7 @@ const makeHash = async (plainText) => {
 const insertUser = (dataUser) => {
     return new Promise((resolve, reject) => {
         var new_user = new User({
-            name: dataUser.name,
+            username: dataUser.username,
             email: dataUser.email,
             password: dataUser.password,
         });
@@ -71,7 +71,7 @@ const findUser = (email) => {
                 if (data) {
                     resolve({
                         id: data._id,
-                        name: data.name,
+                        username: data.username,
                         email: data.email,
                         password: data.password,
                     });
@@ -89,7 +89,7 @@ router.route('/signup')
         makeHash(req.body.password)
             .then(hashText => {
                 const playload = {
-                    name: req.body.name,
+                    username: req.body.username,
                     email: req.body.email,
                     password: hashText,
                 }

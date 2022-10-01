@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Baloo+2:wght@400;500&family=Balsamiq+Sans&family=Cabin+Sketch:wght@700&family=Carter+One&family=Concert+One&family=Do+Hyeon&family=Fredoka+One&family=Gugi&family=IBM+Plex+Sans+Thai&family=Inter&family=Itim&family=Jua&family=Kosugi+Maru&family=Mitr:wght@300;400&family=Monda&family=Press+Start+2P&family=Pridi&family=Rampart+One&family=Righteous&family=Special+Elite&family=Stick+No+Bills&family=Viga&display=swap');
+
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    max-width: 1170px;
+    margin: 0 auto;
+    border: 1px solid red;
+}
+
+nav {
+    height: 60px;
+    border: 1px solid red;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header {
+    height: 650px;
+    background-color: #B2C8DF;
+    background-position: center;
+    border: 1px solid red;
+
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    width: 400px;
+    border: 1px solid red;
+    justify-content: space-between;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+}
+
+.logo {
+    text-align: center;
+}
+
+.logo img {
+    width: 130px;
+    height: 70px;
+    display: flex;
+}
+
+.Profile {
+    height: 950px;
+    background: white;
+    background-position: center;
+    border: 1px solid red;
+}
+
