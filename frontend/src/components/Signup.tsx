@@ -6,21 +6,31 @@ function Signup() {
 
     const [user, setUser] = useState<Partial<UserInterface>>({});
 
-    const apiUrl = "http://localhost:4200/user/signup";
-    const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-    };
+    // Api
+    const apiUrl = "http://localhost:4200";
 
-    const signup = () => {
-        console.log(requestOptions);
-        fetch(apiUrl, requestOptions)
+    function submit(e: React.SyntheticEvent) {
+        e.preventDefault();
+        let datauser = {
+            username: user.username,
+            email: user.email,
+            password: user.password,
+        }
+        console.log(datauser);
+
+        const requestOptionsPost = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datauser),
+        };
+
+        fetch(`${apiUrl}/user/signup`, requestOptionsPost)
             .then((response) => response.json())
             .then((res) => {
                 console.log(res);
                 if (res.message) {
                     console.log("signup completed");
+                    ClearFrom();
                 } else {
                     console.log("error");
                 }
@@ -29,20 +39,27 @@ function Signup() {
 
     const handleInputChange = (
         event: React.ChangeEvent<{ id?: string; value: any }>
-      ) => {
+    ) => {
         const id = event.target.id as keyof typeof user;
         const { value } = event.target;
         setUser({ ...user, [id]: value });
         console.log(user);
-      };
+    };
+
+    // function clear form after submit success
+    const ClearFrom = () => {
+        const fromdata = document.getElementById('signup-form') as HTMLFormElement;
+        fromdata.reset();
+        setUser({});
+    }
+
+
+
+
 
     return (
         <div className="signup-form-container">
-            <form className="signup-form" onSubmit={
-                    (e: React.SyntheticEvent) => {
-                        e.preventDefault();
-                        signup();
-                    }}>
+            <form className="signup-form" id="signup-form">
                 <div className="signup-form-content">
                     <h3 className="signup-form-title">SIGN UP</h3>
                     <div className="form-group mt-3">
@@ -76,7 +93,7 @@ function Signup() {
                         />
                     </div>
                     <div className="d-grid gap-2 mt-3">
-                        <button type="submit" className="btn btn-primary">
+                        <button type="submit" className="btn btn-primary" onClick={submit}>
                             Submit
                         </button>
                     </div>
