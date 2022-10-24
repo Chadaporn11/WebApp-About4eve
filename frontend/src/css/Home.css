@@ -10,12 +10,10 @@
 .container {
     max-width: 1170px;
     margin: 0 auto;
-    border: 1px solid red;
 }
 
 nav {
     height: 60px;
-    border: 1px solid red;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -25,7 +23,6 @@ header {
     height: 650px;
     background-color: #B2C8DF;
     background-position: center;
-    border: 1px solid red;
 
 }
 
@@ -33,7 +30,6 @@ nav ul {
     display: flex;
     list-style: none;
     width: 400px;
-    border: 1px solid red;
     justify-content: space-between;
 }
 
@@ -56,6 +52,5 @@ nav ul li a {
     height: 950px;
     background: white;
     background-position: center;
-    border: 1px solid red;
 }
 

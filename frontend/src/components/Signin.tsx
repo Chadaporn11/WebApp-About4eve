@@ -6,16 +6,18 @@ function Signin() {
 
     const [user, setUser] = useState<Partial<UserInterface>>({});
 
-    const apiUrl = "http://localhost:4200/user/signin";
-    const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-    };
+    const apiUrl = "http://localhost:4200";
 
-    const signin = () => {
-        console.log(requestOptions);
-        fetch(apiUrl, requestOptions)
+    function login(e: React.SyntheticEvent){
+        e.preventDefault();
+ 
+        const requestOptionsPost = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user),
+        };
+
+        fetch(`${apiUrl}/user/signin`, requestOptionsPost)
             .then((response) => response.json())
             .then((res) => {
                 console.log(res);
@@ -23,6 +25,7 @@ function Signin() {
                     console.log("signin completed");
                     localStorage.setItem("token", res.token);
                     localStorage.setItem("id", res.result.id);
+                    //ClearFrom();
                     window.location.href = '/market'
                 } else {
                     console.log("error");
@@ -39,13 +42,17 @@ function Signin() {
         console.log(user);
     };
 
+    // function clear form after submit success
+    const ClearFrom = () => {
+        const fromdata = document.getElementById('signup-form') as HTMLFormElement;
+        fromdata.reset();
+        setUser({});
+    }
+
+
     return (
         <div className="signin-form-container">
-            <form className="signin-form" onSubmit={
-                (e: React.SyntheticEvent) => {
-                    e.preventDefault();
-                    signin();
-                }}>
+            <form className="signin-form" id="signin-form">
                 <div className="signin-form-content">
                     <h3 className="signin-form-title">SIGN IN</h3>
                     <div className="form-group mt-3">
@@ -69,7 +76,7 @@ function Signin() {
                         />
                     </div>
                     <div className="d-grid gap-2 mt-3">
-                        <button type="submit" className="btn btn-primary">
+                        <button type="submit" className="btn btn-primary" onClick={login}>
                             Submit
                         </button>
                     </div>

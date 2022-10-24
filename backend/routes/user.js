@@ -1,27 +1,14 @@
 var expressFunction = require('express');
 const router = expressFunction.Router();
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const user_model = require('../models/user');
+const authorization = require('../config/authorize');
+const profileuser_model = require('../models/profileuser');
+const upload = require('../config/imageconfig');
+const mongoose = require('mongoose');
 
 const key = "My_Key";
-
-var Schema = require("mongoose").Schema;
-
-const userSchema = Schema({
-    username: String,
-    email: String,
-    password: String,
-}, {
-    collection: 'users'
-});
-
-let User
-try {
-    User = mongoose.model('users');
-} catch (error) {
-    User = mongoose.model('users', userSchema);
-}
 
 // function makeHash
 const makeHash = async (plainText) => {
@@ -29,14 +16,28 @@ const makeHash = async (plainText) => {
     return result;
 }
 
+// function formatsize profile
+const fileSizeFormatter = (bytes, decimal) => {
+    if (bytes === 0) {
+        return '0 Bytes';
+    }
+    const dm = decimal || 2;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'YB', 'ZB'];
+    const index = Math.floor(Math.log(bytes) / Math.log(1000));
+    return parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + ' ' + sizes[index];
+
+}
+
 // function insertUser
 const insertUser = (dataUser) => {
     return new Promise((resolve, reject) => {
-        var new_user = new User({
+        var new_user = new user_model({
             username: dataUser.username,
             email: dataUser.email,
             password: dataUser.password,
+            profile: dataUser.profile,
         });
+        console.log(new_user);
         new_user.save((err, data) => {
             if (err) {
                 console.log(err);
@@ -64,16 +65,16 @@ const compareHash = async (plainText, hashText) => {
 // function findUser
 const findUser = (email) => {
     return new Promise((resolve, reject) => {
-        User.findOne({ email: email }, (err, data) => {
+        user_model.findOne({ email: email }, (err, data) => {
             if (err) {
                 reject(new Error('Cannot find username!'));
             } else {
                 if (data) {
                     resolve({
-                        id: data._id,
                         username: data.username,
                         email: data.email,
                         password: data.password,
+                        profile: data.profile,
                     });
                 } else {
                     reject(new Error('Cannot find email!'));
@@ -85,16 +86,22 @@ const findUser = (email) => {
 
 // Sign up
 router.route('/signup')
-    .post((req, res) => {
+    .post(upload.uploadprofile.single('profile'), (req, res) => {
         makeHash(req.body.password)
             .then(hashText => {
-                const playload = {
+                const file = new profileuser_model({
+                    fileName: req.file.originalname,
+                    filePath: req.file.path,
+                    fileType: req.file.mimetype,
+                    fileSize: fileSizeFormatter(req.file.size, 2) // 0.00
+                });
+                const payload = {
                     username: req.body.username,
                     email: req.body.email,
                     password: hashText,
+                    profile: file,
                 }
-                console.log(playload);
-                insertUser(playload)
+                insertUser(payload)
                     .then(result => {
                         console.log(result);
                         res.status(200).json(result);
@@ -113,20 +120,18 @@ router.route('/signup')
 // Sign in 
 router.route('/signin')
     .post(async (req, res) => {
-        const playload = {
+        const payload = {
             email: req.body.email,
             password: req.body.password,
         };
-
-        console.log(playload);
-
+        console.log(payload);
         try {
-            const result = await findUser(playload.email);
-            const loginStatus = await compareHash(playload.password, result.password);
+            const result = await findUser(payload.email);
+            const loginStatus = await compareHash(payload.password, result.password);
             const status = loginStatus.status;
 
             if (status) {
-                const token = jwt.sign(result, key, { expiresIn: 60 * 5 });
+                const token = jwt.sign(result, key, { expiresIn: '1h' });
                 res.status(200).json({ result, token, status });
             } else {
                 res.status(200).json({ status });
@@ -135,6 +140,8 @@ router.route('/signin')
             res.status(404).send(error);
         }
     })
+
+
 
 
 
